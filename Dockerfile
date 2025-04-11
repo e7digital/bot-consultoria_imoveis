@@ -1,23 +1,23 @@
-FROM botpress/server:v12_31_2
-
-EXPOSE 3000
 FROM node:18
 
+# Diretório de trabalho
 WORKDIR /app
 
+# Ativar corepack e preparar pnpm
+RUN corepack enable && corepack prepare pnpm@8.6.2 --activate
+
+# Copiar arquivos
 COPY . .
 
-
-RUN corepack enable
+# Instalar dependências
 RUN pnpm install
+
+# Build do projeto (se houver)
 RUN pnpm build
 
-
+# Porta que será exposta
 EXPOSE 3000
 
-CMD ["yarn", "start"]
-FROM node:18
-
-WORKDIR /app
-
+# Comando para rodar a aplicação
+CMD ["pnpm", "start"]
 
