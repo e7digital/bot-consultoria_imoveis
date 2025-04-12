@@ -1,8 +1,8 @@
 {
-  "name": "consultoria_imoveis",
-  "version": "1.0.0",
+  "name": "botpress",
+  "private": true,
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "build": "turbo run generate && turbo run build",
     "bump": "depsynky bump --ignore-dev && pnpm -w install",
     "test": "vitest --run",
     "check:bplint": "turbo check:bplint",
@@ -63,5 +63,6 @@
     "vitest": "^2.1.4"
   },
   "packageManager": "pnpm@8.6.2"
-}
 
+  "start": "echo 'No start script yet. Add your start command here.' && sleep 3600"
+}

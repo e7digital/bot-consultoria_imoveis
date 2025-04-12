@@ -1,23 +1,40 @@
-FROM node:18
+# Etapa 1: Imagem base com Node e pnpm
+FROM node:20 AS base
 
-# Diretório de trabalho
+# Instalar pnpm na versão usada no projeto
+RUN npm install -g pnpm@8.6.2
+
+# Diretório de trabalho dentro do container
 WORKDIR /app
 
-# Ativar corepack e preparar pnpm
-RUN corepack enable && corepack prepare pnpm@8.6.2 --activate
+# Copiar os arquivos de dependências primeiro (cache eficiente)
+COPY package.json pnpm-lock.yaml ./
 
-# Copiar arquivos
+# Instalar dependências com lockfile
+RUN pnpm install --frozen-lockfile
+
+# Copiar todo o restante do código da aplicação
 COPY . .
 
-# Instalar dependências
-RUN pnpm install
+# Etapa 2: Build do projeto (opcional, se tiver build em TypeScript separado)
+# RUN pnpm run build
 
-# Build do projeto (se houver)
-RUN pnpm build
-
-# Porta que será exposta
-EXPOSE 3000
-
-# Comando para rodar a aplicação
+# Etapa 3: Executar a aplicação
 CMD ["pnpm", "start"]
+
+FROM node:20-alpine AS base
+
+RUN npm install -g pnpm@8.6.2
+
+WORKDIR /app
+
+# Copia arquivos importantes
+COPY .npmrc package.json pnpm-lock.yaml ./
+
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+
+CMD ["pnpm", "start"]
+
 
